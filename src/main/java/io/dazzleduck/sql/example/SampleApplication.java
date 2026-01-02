@@ -1,55 +1,54 @@
 package io.dazzleduck.sql.example;
 
-import io.dazzleduck.sql.logger.ArrowSimpleLogger;
-import io.dazzleduck.sql.micrometer.metrics.MetricsRegistryFactory;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.*;
+import io.micrometer.core.instrument.logging.LoggingMeterRegistry;
+import io.micrometer.core.instrument.logging.LoggingRegistryConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+
+import java.time.Duration;
 
 public class SampleApplication {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SampleApplication.class);
+
     public static void main(String[] args) throws Exception {
 
-
-        MeterRegistry registry = MetricsRegistryFactory.create();
-        ArrowSimpleLogger logger = new ArrowSimpleLogger(SampleApplication.class.getName());//we have to use slf4j log not arrowlogger
-      //  Logger logger = LoggerFactory.getLogger(SampleApplication.class);//this how we have to do
+        // Simple logging registry (prints to console)
+        var registry = new LoggingMeterRegistry();
 
         try {
-            logger.info("Sample application started");
-            simulateWork(logger, registry);
-            logger.info("Sample application finished successfully");
+            LOGGER.info("Sample application started");
+            simulateWork(LOGGER, registry);
+            LOGGER.info("Sample application finished successfully");
+            Thread.sleep(2000);
 
         } finally {
-           registry.close();  // flush metrics
-            logger.close();    // flush logs
+            registry.close();
         }
     }
 
-    private static void simulateWork(
-            ArrowSimpleLogger logger,
-            MeterRegistry registry
-    ) throws InterruptedException {
+    private static void simulateWork(Logger logger, MeterRegistry registry) {
 
         Counter processedCounter = Counter.builder("records.count")
-                        .description("Number of records processed")
-                        .register(registry);
+                .description("Number of records processed")
+                .register(registry);
 
         Timer processingTimer = Timer.builder("record.time")
-                        .description("Time spent processing records")
-                        .register(registry);
+                .description("Time spent processing records")
+                .register(registry);
 
         for (int i = 1; i <= 10; i++) {
+            int recordNumber = i;
 
-            final int recordNumber = i;
             processingTimer.record(() -> {
                 try {
                     logger.info("Processing record {}", recordNumber);
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    throw new RuntimeException(e);
+                    logger.error("Processing interrupted", e);
                 }
             });
 
