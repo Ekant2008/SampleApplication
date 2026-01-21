@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Versions -->
-        <dazzleduck.version>0.0.13-SNAPSHOT</dazzleduck.version>
+        <dazzleduck.version>0.0.15</dazzleduck.version>
         <jackson.version>2.18.3</jackson.version>
     </properties>
 
@@ -24,33 +24,25 @@
 
         <!-- ================= DazzleDuck ================= -->
 
-        <dependency>
-            <groupId>io.dazzleduck.sql</groupId>
-            <artifactId>dazzleduck-sql-flight</artifactId>
-            <version>${dazzleduck.version}</version>
-        </dependency>
+
 
         <dependency>
             <groupId>io.dazzleduck.sql</groupId>
-            <artifactId>dazzleduck-sql-http</artifactId>
+            <artifactId>dazzleduck-sql-runtime</artifactId>
             <version>${dazzleduck.version}</version>
+            <classifier>tests</classifier>
         </dependency>
 
-        <dependency>
-            <groupId>io.dazzleduck.sql</groupId>
-            <artifactId>dazzleduck-sql-logger</artifactId>
-            <version>${dazzleduck.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
             <version>1.12.7</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.dazzleduck.sql</groupId>-->
-<!--            <artifactId>dazzleduck-sql-micrometer</artifactId>-->
-<!--            <version>${dazzleduck.version}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.dazzleduck.sql</groupId>
+            <artifactId>dazzleduck-sql-micrometer</artifactId>
+            <version>${dazzleduck.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency>
             <groupId>org.slf4j</groupId>
